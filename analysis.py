@@ -17,6 +17,14 @@ Markerspecies are written to markerspecies.txt and a volcano plot is plotted for
 feat = pd.read_csv(os.getcwd() + "/data/feat_all.tsv", sep="\t")
 meta = pd.read_csv(os.getcwd() + "/data/meta_all.tsv", sep ="\t")
 
+#filter species where counts are 0 in all samples
+def filter_species(data):
+    sparsity = np.mean((feat  == 0).astype(int), axis=1)
+    ids2keep = np.where(sparsity != 1)[0]
+    return data.iloc[ids2keep,]
+
+feat = filter_species(feat)
+
 #Normalization
 normfeat = feat/feat.sum(axis=0)
 
@@ -60,7 +68,7 @@ plt.scatter(sigFC, -np.log10(sigpval))
 plt.plot([-20,20], [threshold,threshold], "--" , c = "orange")
 plt.plot([-2,-2], [0,4.5], "--" , c = "orange")
 plt.plot([2,2], [0,4.5], "--" , c = "orange")
-plt.xlabel("log2 fold change")
+plt.xlabel("log2 fold change CRC/CTR")
 plt.ylabel("-log10 p-value")
 plt.savefig(os.getcwd() + "/markerspecies.png")
 plt.show()
